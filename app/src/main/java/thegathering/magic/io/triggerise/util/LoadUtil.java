@@ -13,7 +13,7 @@ import thegathering.magic.io.triggerise.pojo.Set;
  */
 
 public class LoadUtil {
-    public static ArrayList<?> loadSets(RequestQueue requestQueue) {
+    public static ArrayList<Set> loadSets(RequestQueue requestQueue) {
         JSONObject response = RequestUtil.requestSetsData(requestQueue);
         ArrayList<Set> listCategories = ParseUtil.parseSets(response);
 //        MyApplication.getWritableDatabase().insertDelivery(listDeliveries, true);

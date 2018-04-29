@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import thegathering.magic.io.triggerise.R;
@@ -51,10 +52,19 @@ public class DashboardFragment extends BaseFragment {
         return setList;
     }
 
+    @Override
+    protected ArrayList<?> addToObjectList() {
+        return null;
+    }
+
 
     @Override
     public void onApiResponseLoaded(ArrayList listItems) {
+        L.m("onApiResponseLoaded " + Arrays.asList(listItems));
+        this.addToList(listItems);
 
     }
+
+
 
 }

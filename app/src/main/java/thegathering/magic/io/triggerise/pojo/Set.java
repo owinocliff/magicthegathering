@@ -4,16 +4,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by clifford.owino on 25/04/2018.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({
         "code",
         "name",
@@ -37,7 +40,7 @@ public class Set implements Parcelable {
     @JsonProperty("mkm_id")
     private Integer mkmId;
     @JsonProperty("booster")
-    private List<String> booster = null;
+    private List booster;
     @JsonProperty("mkm_name")
     private String mkmName;
     @JsonProperty("releaseDate")
@@ -125,12 +128,12 @@ public class Set implements Parcelable {
     }
 
     @JsonProperty("booster")
-    public List<String> getBooster() {
+    public List getBooster() {
         return booster;
     }
 
     @JsonProperty("booster")
-    public void setBooster(List<String> booster) {
+    public void setBooster(List  booster) {
         this.booster = booster;
     }
 
@@ -174,5 +177,19 @@ public class Set implements Parcelable {
         dest.writeStringList(booster);
         dest.writeString(mkmName);
         dest.writeString(releaseDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Set{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", border='" + border + '\'' +
+                ", mkmId=" + mkmId +
+                ", booster=" + booster +
+                ", mkmName='" + mkmName + '\'' +
+                ", releaseDate='" + releaseDate + '\'' +
+                '}';
     }
 }

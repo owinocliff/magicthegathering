@@ -16,12 +16,13 @@ import android.view.animation.LayoutAnimationController;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.magicthegathering.javasdk.api.CardAPI;
+import io.magicthegathering.javasdk.resource.Card;
 import thegathering.magic.io.triggerise.R;
-import thegathering.magic.io.triggerise.adapters.APiResponseObjectAdapter;
+import thegathering.magic.io.triggerise.adapters.APiResponseAdapter;
 import thegathering.magic.io.triggerise.callbacks.ApiResponseLoadedListener;
 import thegathering.magic.io.triggerise.log.L;
 import thegathering.magic.io.triggerise.pojo.AnimationStyle;
-import thegathering.magic.io.triggerise.pojo.Card;
 import thegathering.magic.io.triggerise.pojo.Set;
 import thegathering.magic.io.triggerise.recyclerview.ItemOffsetDecoration;
 import thegathering.magic.io.triggerise.tasks.TaskLoadFromApi;
@@ -35,7 +36,7 @@ public abstract class BaseFragment<T> extends Fragment implements ApiResponseLoa
     private static final String STATE_CATEGORIES = "state_data";
 
     private AnimationStyle mSelectedStyle;
-    private APiResponseObjectAdapter<T> apiResponseAdaptor;
+    private APiResponseAdapter<T> apiResponseAdaptor;
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ArrayList<T> objectList = new ArrayList<>();
@@ -67,7 +68,9 @@ public abstract class BaseFragment<T> extends Fragment implements ApiResponseLoa
      *
      * @return the category type id
      */
-    protected abstract ArrayList<?> getObjectList();
+    protected abstract ArrayList<T> getObjectList();
+
+    protected abstract ArrayList<T> addToObjectList();
 
 
     @Nullable
@@ -99,6 +102,8 @@ public abstract class BaseFragment<T> extends Fragment implements ApiResponseLoa
         setupRecyclerView(savedInstanceState);
 
         runLayoutAnimation(mRecyclerView, mSelectedStyle);
+
+
     }
 
     @Override
@@ -129,31 +134,40 @@ public abstract class BaseFragment<T> extends Fragment implements ApiResponseLoa
         final Context context = mRecyclerView.getContext();
         final int spacing = getResources().getDimensionPixelOffset(R.dimen.default_spacing_small);
 
+
         mRecyclerView.setLayoutManager(getLayoutManager(context));
-        apiResponseAdaptor = new APiResponseObjectAdapter<>(objectList, getActivity(), mRecyclerView);
+        apiResponseAdaptor = new APiResponseAdapter<>(getObjectList(), getActivity(), mRecyclerView, Set.class);
         mRecyclerView.setAdapter(apiResponseAdaptor);
-        L.m("categoryList " + objectList.toString());
+        L.m("categoryList " + getObjectList().toString());
         mRecyclerView.addItemDecoration(new ItemOffsetDecoration(spacing));
-        if (savedInstanceState != null) {
+//        if (savedInstanceState != null) {
             //if this fragment starts after a rotation or configuration change, load the existing list from a parcelable
-            objectList = (ArrayList<T>) savedInstanceState.getParcelableArrayList(STATE_CATEGORIES);
-        } else {
+//            getObjectList() = (ArrayList<T>) savedInstanceState.getParcelableArrayList(STATE_CATEGORIES);
+//        } else {
             //testing
-            for (int i = 0; i <= 10; i++) {
-                objectList.add((T) new Card());
-            }
-            if (objectList.isEmpty()) {
+//            for (int i = 0; i <= 10; i++) {
+//                getObjectList().add((T) new Card());
+//            }
+
+            if (getObjectList().isEmpty()) {
                 // last parameter should be request type i.e top level or next level
 
-
-//                new TaskLoadFromApi(this, Set.class).execute();
+                mSwipeRefreshLayout.setRefreshing(true);
+                new TaskLoadFromApi(this).execute();
 
             } else {
-//                new TaskLoadFromApi(this, Set.class).execute();
+                mSwipeRefreshLayout.setRefreshing(true);
+                new TaskLoadFromApi(this).execute();
             }
-        }
+//        }
 
-        apiResponseAdaptor.setSetList(objectList);
+        apiResponseAdaptor.setObjectList(getObjectList());
+    }
+
+    public void addToList(ArrayList<T> newList){
+        mSwipeRefreshLayout.setRefreshing(false);
+        apiResponseAdaptor.addToSetsList(newList);
+
     }
 
 

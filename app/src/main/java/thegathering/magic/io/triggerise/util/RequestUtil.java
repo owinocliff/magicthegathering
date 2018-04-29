@@ -21,7 +21,7 @@ import thegathering.magic.io.triggerise.pojo.Keys;
 public class RequestUtil {
 
     public static JSONObject requestSetsData(RequestQueue requestQueue) {
-        String url = Keys.keys.BASE_URL;
+        String url = Keys.keys.BASE_URL+"/sets";
         L.m("url "+url);
         JSONObject response = null;
         RequestFuture<JSONObject> requestFuture = RequestFuture.newFuture();
