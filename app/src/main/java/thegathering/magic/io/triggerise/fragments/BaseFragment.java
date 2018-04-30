@@ -16,14 +16,13 @@ import android.view.animation.LayoutAnimationController;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.magicthegathering.javasdk.api.CardAPI;
-import io.magicthegathering.javasdk.resource.Card;
+
+import io.magicthegathering.javasdk.resource.MtgSet;
 import thegathering.magic.io.triggerise.R;
 import thegathering.magic.io.triggerise.adapters.APiResponseAdapter;
 import thegathering.magic.io.triggerise.callbacks.ApiResponseLoadedListener;
 import thegathering.magic.io.triggerise.log.L;
 import thegathering.magic.io.triggerise.pojo.AnimationStyle;
-import thegathering.magic.io.triggerise.pojo.Set;
 import thegathering.magic.io.triggerise.recyclerview.ItemOffsetDecoration;
 import thegathering.magic.io.triggerise.tasks.TaskLoadFromApi;
 
@@ -136,7 +135,7 @@ public abstract class BaseFragment<T> extends Fragment implements ApiResponseLoa
 
 
         mRecyclerView.setLayoutManager(getLayoutManager(context));
-        apiResponseAdaptor = new APiResponseAdapter<>(getObjectList(), getActivity(), mRecyclerView, Set.class);
+        apiResponseAdaptor = new APiResponseAdapter<>(getObjectList(), getActivity(), mRecyclerView, MtgSet.class);
         mRecyclerView.setAdapter(apiResponseAdaptor);
         L.m("categoryList " + getObjectList().toString());
         mRecyclerView.addItemDecoration(new ItemOffsetDecoration(spacing));
@@ -149,16 +148,16 @@ public abstract class BaseFragment<T> extends Fragment implements ApiResponseLoa
 //                getObjectList().add((T) new Card());
 //            }
 
-            if (getObjectList().isEmpty()) {
-                // last parameter should be request type i.e top level or next level
-
-                mSwipeRefreshLayout.setRefreshing(true);
-                new TaskLoadFromApi(this).execute();
-
-            } else {
-                mSwipeRefreshLayout.setRefreshing(true);
-                new TaskLoadFromApi(this).execute();
-            }
+//            if (getObjectList().isEmpty()) {
+//                // last parameter should be request type i.e top level or next level
+//
+//                mSwipeRefreshLayout.setRefreshing(true);
+//                new TaskLoadFromApi(this).execute();
+//
+//            } else {
+//                mSwipeRefreshLayout.setRefreshing(true);
+//                new TaskLoadFromApi(this).execute();
+//            }
 //        }
 
         apiResponseAdaptor.setObjectList(getObjectList());
@@ -166,7 +165,7 @@ public abstract class BaseFragment<T> extends Fragment implements ApiResponseLoa
 
     public void addToList(ArrayList<T> newList){
         mSwipeRefreshLayout.setRefreshing(false);
-        apiResponseAdaptor.addToSetsList(newList);
+        apiResponseAdaptor.addToObjectList(newList);
 
     }
 

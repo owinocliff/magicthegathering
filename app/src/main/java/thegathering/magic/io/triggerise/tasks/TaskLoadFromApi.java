@@ -17,29 +17,20 @@ import thegathering.magic.io.triggerise.util.LoadUtil;
 public class TaskLoadFromApi<T> extends VoidApiCallsAsyncTask {
     private ApiResponseLoadedListener myComponent;
     private RequestQueue requestQueue;
+    private String setCode;
+    private boolean loadingSet = false;
 
     /**
      * @param myComponent | requesting context
      */
-    public TaskLoadFromApi(ApiResponseLoadedListener myComponent) {//, Class<T> objectClass
+    public TaskLoadFromApi(ApiResponseLoadedListener myComponent, String setCode, boolean loadingSet) {
 
         this.myComponent = myComponent;
         requestQueue = VolleySingleton.getInstance().getRequestQueue();
+        this.setCode = setCode;
+        this.loadingSet = loadingSet;
 
     }
-
-
-//    @Override
-//    protected ArrayList<T> doInBackground(Void... params) {
-//        return (ArrayList<T>) LoadUtil.loadSets(requestQueue);
-//    }
-
-//    @Override
-//    protected void onPostExecute(ArrayList<T> responsePayload) {
-//        if (myComponent != null) {
-//            myComponent.onApiResponseLoaded(responsePayload);
-//        }
-//    }
 
     @Override
     protected void onPostExecute(Object responsePayload) {
@@ -50,6 +41,10 @@ public class TaskLoadFromApi<T> extends VoidApiCallsAsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        return  LoadUtil.loadSets(requestQueue);
+        if (loadingSet) {
+            return LoadUtil.loadSets(setCode);
+        } else {
+            return LoadUtil.loadCards(setCode);
+        }
     }
 }
