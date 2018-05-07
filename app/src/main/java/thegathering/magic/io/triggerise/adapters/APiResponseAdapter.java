@@ -18,6 +18,7 @@ import io.magicthegathering.javasdk.resource.Card;
 import io.magicthegathering.javasdk.resource.MtgSet;
 import thegathering.magic.io.triggerise.R;
 import thegathering.magic.io.triggerise.activities.MainActivity;
+import thegathering.magic.io.triggerise.application.MyApplication;
 import thegathering.magic.io.triggerise.fragments.CardsFragment;
 import thegathering.magic.io.triggerise.log.L;
 
@@ -46,10 +47,15 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
     }
 
     public void addToObjectList(ArrayList<T> newCategoryList) {
-
-        int previousSize = objectList.size();
-        objectList.addAll(newCategoryList);// confirm this method, may produce duplicates
-        notifyItemRangeChanged(previousSize, newCategoryList.size());
+        if (newCategoryList != null) {
+            if (!newCategoryList.isEmpty()) {
+                int previousSize = objectList.size();
+                objectList.addAll(newCategoryList);
+                notifyItemRangeChanged(previousSize, newCategoryList.size());
+            }
+        } else {
+            L.T(MyApplication.getAppContext(), "No data retrieved");
+        }
 
     }
 
@@ -57,7 +63,8 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (currentClass == MtgSet.class) {
-        return new ViewHolder(inflater.inflate(R.layout.row_empty_set, parent, false));}else{
+            return new ViewHolder(inflater.inflate(R.layout.row_empty_set, parent, false));
+        } else {
             return new ViewHolder(inflater.inflate(R.layout.row_empty_card, parent, false));
         }
     }
@@ -68,8 +75,8 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
         if (currentClass == MtgSet.class) {
             final MtgSet current = (MtgSet) objectList.get(position);
 
-            holder.set_code.setText(current.getCode());
-            holder.set_name.setText(current.getName());
+            holder.set_code.setText(trimString(current.getCode()));
+            holder.set_name.setText(trimString(current.getName()));
             holder.set_mkm_id.setText(current.getMagicCardsInfoCode());
             holder.card_item.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -78,7 +85,7 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
 
                     CardsFragment newFragment = new CardsFragment();
                     Bundle args = new Bundle();
-                    args.putString("SETCODE",current.getCode());
+                    args.putString("SETCODE", current.getCode());
                     newFragment.setArguments(args);
                     ((MainActivity) context).showFragment(newFragment, "CardsFragment");
                     L.m("Position onClick ");
@@ -86,13 +93,17 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
 
                 }
             });
-        }else if (currentClass == Card.class){
+        } else if (currentClass == Card.class) {
             final Card current = (Card) objectList.get(position);
             L.m("in card");
-            holder.set_code.setText(current.getText());
-            holder.set_name.setText(current.getOriginalText());
-            holder.set_mkm_id.setText(current.getImageName());
-            Picasso.with(context).load(current.getImageUrl()).into(holder.card_icon);
+            holder.set_code.setText(trimString(current.getText()));
+            holder.set_name.setText(trimString(current.getOriginalText()));
+            holder.set_mkm_id.setText(trimString(current.getImageName()));
+            Picasso.with(context)
+                    .load(current.getImageUrl())
+                    .placeholder(R.drawable.placeholder)
+                    .noFade()
+                    .into(holder.card_icon);
         }
     }
 
@@ -102,6 +113,15 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
             return objectList.size();
         }
         return 0;
+    }
+
+    private String trimString(String data) {
+
+        if (data != null)
+            if (data.length() > 100) {
+                return data.substring(0, 100).concat("...");
+            }
+        return data;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

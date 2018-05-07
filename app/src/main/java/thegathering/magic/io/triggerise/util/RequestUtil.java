@@ -20,7 +20,7 @@ class RequestUtil {
 
         L.m("requestSetsData setCode " + setCode);
 
-        if (setCode != null && setCode.length()>1) {
+        if (setCode != null && setCode.length() > 1) {
             List<MtgSet> currentList = new ArrayList<>();
             currentList.add(SetAPI.getSet(setCode));
             return currentList;
@@ -32,8 +32,14 @@ class RequestUtil {
     static List<Card> requestCardsList(String setCode) {
 
         L.m("requestCardsList setCode " + setCode);
-        if (setCode != null && setCode.length()>1) {
-            return SetAPI.getBooster(setCode);
+        if (setCode != null) {
+            try {
+                if (setCode.length() > 1)
+                    return SetAPI.getBooster(setCode);
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
         }
         return null;
     }
