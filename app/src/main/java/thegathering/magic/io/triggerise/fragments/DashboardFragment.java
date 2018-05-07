@@ -21,6 +21,7 @@ import java.util.Arrays;
 import io.magicthegathering.javasdk.resource.MtgSet;
 import thegathering.magic.io.triggerise.R;
 import thegathering.magic.io.triggerise.adapters.APiResponseAdapter;
+import thegathering.magic.io.triggerise.application.MyApplication;
 import thegathering.magic.io.triggerise.callbacks.ApiResponseLoadedListener;
 import thegathering.magic.io.triggerise.log.L;
 import thegathering.magic.io.triggerise.recyclerview.ItemOffsetDecoration;
@@ -115,7 +116,11 @@ public class DashboardFragment extends Fragment implements ApiResponseLoadedList
 
     public void onApiResponseLoaded(ArrayList listItems) {
         mSwipeRefreshLayout.setRefreshing(false);
-        apiResponseAdaptor.addToObjectList(listItems);
+        if (!listItems.isEmpty()) {
+            apiResponseAdaptor.addToObjectList(listItems);
+        } else {
+            L.t(MyApplication.getAppContext(), "No data received from APi");
+        }
 
     }
 

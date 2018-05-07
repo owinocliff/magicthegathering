@@ -6,8 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -53,7 +56,10 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new ViewHolder(inflater.inflate(R.layout.row_empty_card, parent, false));
+        if (currentClass == MtgSet.class) {
+        return new ViewHolder(inflater.inflate(R.layout.row_empty_set, parent, false));}else{
+            return new ViewHolder(inflater.inflate(R.layout.row_empty_card, parent, false));
+        }
     }
 
     @Override
@@ -86,6 +92,7 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
             holder.set_code.setText(current.getText());
             holder.set_name.setText(current.getOriginalText());
             holder.set_mkm_id.setText(current.getImageName());
+            Picasso.with(context).load(current.getImageUrl()).into(holder.card_icon);
         }
     }
 
@@ -101,6 +108,7 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
 
         LinearLayout card_item;
         TextView set_name, set_code, set_mkm_id;
+        ImageView card_icon;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -109,6 +117,7 @@ public class APiResponseAdapter<T> extends RecyclerView.Adapter<APiResponseAdapt
             set_name = itemView.findViewById(R.id.set_name);
             set_code = itemView.findViewById(R.id.set_code);
             set_mkm_id = itemView.findViewById(R.id.set_mkm_id);
+            card_icon = itemView.findViewById(R.id.card_icon);
         }
     }
 }
